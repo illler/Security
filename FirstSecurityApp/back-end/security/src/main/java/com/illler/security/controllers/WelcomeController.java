@@ -1,4 +1,4 @@
-package com.illler.securitybasic.controllers;
+package com.illler.security.controllers;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
