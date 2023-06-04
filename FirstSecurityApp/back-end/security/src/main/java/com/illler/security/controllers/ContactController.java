@@ -5,12 +5,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class WelcomeController {
+public class ContactController {
 
-    @GetMapping("/welcome")
-    public String sayWelcome(){
-        return "Welcome";
+    @GetMapping("/contact")
+    public String getContactDetails(){
+        return "Тут детали по контактам";
     }
-
 
 }
