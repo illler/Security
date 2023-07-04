@@ -32,7 +32,7 @@ public class UsernamePasswordAuthProvider implements AuthenticationProvider {
         String pwd = authentication.getCredentials().toString();
         Optional<Customer> customer = customerRepository.findByEmail(username);
         if (customer.isPresent()){
-            if (passwordEncoder.matches(pwd, customer.get().getRole())){
+            if (passwordEncoder.matches(pwd, customer.get().getPwd())){
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority(customer.get().getRole()));
                 return new UsernamePasswordAuthenticationToken(username, pwd, authorities);
