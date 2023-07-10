@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.Optional;
 
 @RestController
@@ -23,6 +24,7 @@ public class LoginController {
     public ResponseEntity<String> register(@RequestBody Customer customer){
         try {
             customer.setPwd(passwordEncoder.encode(customer.getPwd()));
+            customer.setCreateDt(String.valueOf(new Date(System.currentTimeMillis())));
             customerRepository.save(customer);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body("Given user details are successfully registered");

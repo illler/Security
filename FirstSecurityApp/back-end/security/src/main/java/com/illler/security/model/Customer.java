@@ -20,7 +20,6 @@ public class Customer {
     @Column(name = "mobile_number")
     private String mobileNumber;
 
-    @JsonIgnore
     private String pwd;
 
     private String role;

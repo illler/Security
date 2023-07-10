@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface AccountTransactionRepository extends JpaRepository<AccountTransaction, String> {
 
-    List<AccountTransaction> findByCustomerIdOrderByTransactionDtDesc(int customer_id);
+    List<AccountTransaction> findAllByCustomerIdOrderByTransactionDt(int customer_id);
 }
