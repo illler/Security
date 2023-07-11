@@ -1,8 +1,8 @@
 package com.illler.security.config;
 
+import com.illler.security.model.Authorities;
 import com.illler.security.model.Customer;
 import com.illler.security.repository.CustomerRepository;
-import jakarta.security.auth.message.config.AuthConfigProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -33,15 +34,21 @@ public class UsernamePasswordAuthProvider implements AuthenticationProvider {
         Optional<Customer> customer = customerRepository.findByEmail(username);
         if (customer.isPresent()){
             if (passwordEncoder.matches(pwd, customer.get().getPwd())){
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(customer.get().getRole()));
-                return new UsernamePasswordAuthenticationToken(username, pwd, authorities);
+                return new UsernamePasswordAuthenticationToken(username, pwd, getGrantedAuthorities(customer.get().getAuthorities()));
             }else {
                 throw new BadCredentialsException("Invalid password");
             }
         }else {
             throw new BadCredentialsException("NO user with this details");
         }
+    }
+
+    private List<GrantedAuthority> getGrantedAuthorities(Set<Authorities> authorities){
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        for (Authorities authority: authorities) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName()));
+        }
+        return grantedAuthorities;
     }
 
     @Override
