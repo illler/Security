@@ -1,5 +1,7 @@
 package com.illler.security.config;
 
+import com.illler.security.filter.AuthoritiesLoggingAfterFilter;
+import com.illler.security.filter.AuthoritiesLoggingAtFilter;
 import com.illler.security.filter.CsrfCookieFilter;
 import com.illler.security.filter.RequestValidBefore;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +39,8 @@ public class SecurityConfig {
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new RequestValidBefore(), BasicAuthenticationFilter.class)
+                .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
+                .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
                         .requestMatchers("/myAccount").hasRole("USER")
                         .requestMatchers("/myBalance").hasAnyRole("USER","ADMIN")
