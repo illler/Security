@@ -2,6 +2,7 @@ package com.illler.security.config;
 
 import com.illler.security.model.Authorities;
 import com.illler.security.model.Customer;
+import com.illler.security.repository.AuthoritiesRepository;
 import com.illler.security.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,25 +28,28 @@ public class UsernamePasswordAuthProvider implements AuthenticationProvider {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final AuthoritiesRepository authoritiesRepository;
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String pwd = authentication.getCredentials().toString();
-        Optional<Customer> customer = customerRepository.findByEmail(username);
-        if (customer.isPresent()){
-            if (passwordEncoder.matches(pwd, customer.get().getPwd())){
-                return new UsernamePasswordAuthenticationToken(username, pwd, getGrantedAuthorities(customer.get().getAuthorities()));
-            }else {
-                throw new BadCredentialsException("Invalid password");
+        List<Customer> customer = customerRepository.findByEmail(username);
+        Set<Authorities> authorities = authoritiesRepository.findAllByCustomer(customer.get(0));
+        if (customer.size()>0) {
+            if (passwordEncoder.matches(pwd, customer.get(0).getPwd())) {
+                return new UsernamePasswordAuthenticationToken(username, pwd, getGrantedAuthorities(authorities));
+            } else {
+                throw new BadCredentialsException("Invalid password!");
             }
         }else {
-            throw new BadCredentialsException("NO user with this details");
+            throw new BadCredentialsException("No user registered with this details!");
         }
     }
 
-    private List<GrantedAuthority> getGrantedAuthorities(Set<Authorities> authorities){
+    private List<GrantedAuthority> getGrantedAuthorities(Set<Authorities> authorities) {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for (Authorities authority: authorities) {
+        for (Authorities authority : authorities) {
             grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName()));
         }
         return grantedAuthorities;

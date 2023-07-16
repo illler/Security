@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -36,8 +37,8 @@ public class LoginController {
 
     @GetMapping("/user")
     public Customer getUserDetailsAfterLogin(Authentication authentication){
-        Optional<Customer> customer = customerRepository.findByEmail(authentication.getName());
-        return customer.orElse(null);
+        List<Customer> customer = customerRepository.findByEmail(authentication.getName());
+        return customer.get(0);
     }
 
 }
